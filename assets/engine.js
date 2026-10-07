@@ -44,8 +44,7 @@ window.NF_run = function(cfg){
       list = cfg.fixed.slice();
       var done = NF_store.get("nf_done", []);
       if(done.indexOf(cfg.test) >= 0){
-        (cfg.spare || []).forEach(function(id){ list[Math.floor(Math.random()*list.length)] = id; });
-        list = shuffle(list);
+        list = shuffle(list.concat(cfg.spare || [])).slice(0, cfg.fixed.length);   /* a fresh draw from the whole set */
       }
     }
     return {i:-1, score:0, right:0, picked:null, skill:start, startSkill:start, used:[], answers:[], cur:null, saved:false, list:list, order:null};
