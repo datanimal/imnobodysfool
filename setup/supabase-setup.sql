@@ -46,6 +46,10 @@ create policy "website can add" on inbox_signups  for insert to anon with check 
 create policy "website can add" on sender_signups for insert to anon with check (true);
 create policy "website can add" on inbox_clicks   for insert to anon with check (true);
 
+-- Newer Supabase projects do not let the website add rows unless this is granted explicitly.
+grant usage on schema public to anon;
+grant insert on results, inbox_signups, sender_signups, inbox_clicks to anon;
+
 -- Reports for you. Open them under Table Editor, or run: select * from question_stats;
 create view question_stats with (security_invoker = true) as
   select a->>'id' as question, (a->>'d')::int as difficulty, count(*) as times_answered,
