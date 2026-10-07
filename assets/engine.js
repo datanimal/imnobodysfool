@@ -10,6 +10,7 @@ BANK.forEach(function(q){ BY_ID[q.id] = q; });
 
 function el(tag, cls, text){ var e=document.createElement(tag); if(cls) e.className=cls; if(text!=null) e.textContent=text; return e; }
 function clamp(n){ return Math.max(1, Math.min(5, n)); }
+function shuffle(a){ a = a.slice(); for(var i = a.length - 1; i > 0; i--){ var j = Math.floor(Math.random()*(i+1)), t = a[i]; a[i] = a[j]; a[j] = t; } return a; }
 
 /* Pick the next question: unseen, closest in difficulty to the player's level, not the same topic twice running. */
 function pickNext(skill, used, seen, lastTopic){
@@ -17,6 +18,10 @@ function pickNext(skill, used, seen, lastTopic){
   var pool = BANK.filter(function(q){ return used.indexOf(q.id) < 0; });
   var fresh = pool.filter(function(q){ return seen.indexOf(q.id) < 0; });
   if(fresh.length) pool = fresh;
+  else {                                   /* seen is ordered oldest first */
+    pool.sort(function(a, b){ return seen.indexOf(a.id) - seen.indexOf(b.id); });
+    pool = pool.slice(0, 12);
+  }
   var best = null, bestScore = 1e9;
   pool.forEach(function(q){
     var s = Math.abs(q.d - target) + (q.topic === lastTopic ? 0.6 : 0) + Math.random()*0.5;
@@ -34,7 +39,16 @@ window.NF_run = function(cfg){
 
   function fresh(){
     var start = adaptive ? clamp(NF_store.get("nf_skill", 1) - 0.5) : 1;
-    return {i:-1, score:0, right:0, picked:null, skill:start, startSkill:start, used:[], answers:[], cur:null, saved:false};
+    var list = null;
+    if(!adaptive){
+      list = cfg.fixed.slice();
+      var done = NF_store.get("nf_done", []);
+      if(done.indexOf(cfg.test) >= 0){
+        (cfg.spare || []).forEach(function(id){ list[Math.floor(Math.random()*list.length)] = id; });
+        list = shuffle(list);
+      }
+    }
+    return {i:-1, score:0, right:0, picked:null, skill:start, startSkill:start, used:[], answers:[], cur:null, saved:false, list:list, order:null};
   }
   function current(){ return BY_ID[st.cur]; }
   function advance(){
@@ -44,8 +58,10 @@ window.NF_run = function(cfg){
     if(adaptive){
       var last = st.used.length ? BY_ID[st.used[st.used.length-1]].topic : null;
       q = pickNext(st.skill, st.used, NF_store.get("nf_seen", []), last);
-    } else q = BY_ID[cfg.fixed[st.i]];
+    } else q = BY_ID[st.list[st.i]];
     st.cur = q.id; st.used.push(q.id);
+    var idx = q.opts.map(function(_, n){ return n; });
+    st.order = q.opts.length > 2 ? shuffle(idx) : idx;
   }
 
   function textThread(r){
@@ -106,8 +122,8 @@ window.NF_run = function(cfg){
 
     var q = el("h2",null,r.q);
     var opts = el("div","opts");
-    r.opts.forEach(function(o, n){
-      var b = el("button","opt",o[0]); b.type="button";
+    st.order.forEach(function(n){
+      var o = r.opts[n], b = el("button","opt",o[0]); b.type="button";
       if(st.picked !== null){
         b.disabled = true;
         if(o[1]){ b.classList.add("right"); b.textContent = "✓ " + o[0]; }
@@ -146,10 +162,11 @@ window.NF_run = function(cfg){
     if(st.saved) return;
     st.saved = true;
     var seen = NF_store.get("nf_seen", []);
-    st.used.forEach(function(id){ if(seen.indexOf(id) < 0) seen.push(id); });
-    if(seen.length >= BANK.length) seen = [];
+    seen = seen.filter(function(id){ return st.used.indexOf(id) < 0 && BY_ID[id]; }).concat(st.used);
     NF_store.set("nf_seen", seen);
     if(adaptive) NF_store.set("nf_skill", st.skill);
+    var done = NF_store.get("nf_done", []);
+    if(done.indexOf(cfg.test) < 0){ done.push(cfg.test); NF_store.set("nf_done", done); }
     NF_profile.save();
     NF_save("results", {
       anon_id: NF_anon(), test: cfg.test, correct: st.right, total: total, pct: pct,
