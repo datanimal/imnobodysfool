@@ -2,8 +2,8 @@
    Paste the two values from your Supabase project (Project Settings > API).
    The "anon public" key is designed to be visible in a web page. Never paste the "service_role" key here. */
 window.NF_CONFIG = {
-  SUPABASE_URL: "",
-  SUPABASE_KEY: ""
+  SUPABASE_URL: "https://iqzxlxvtxvijusgjpqqy.supabase.co",
+  SUPABASE_KEY: "sb_publishable_kVa0V7KT8QPk5UMFrsbC3Q_YsNKoN3Q"
 };
 
 /* Shared helpers: an anonymous device id, and a function that saves one row. */
