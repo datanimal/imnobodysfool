@@ -1,0 +1,237 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Free three-minute practice rounds that teach you and your family to spot scam texts.">
+<style>body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
+<title>I'm Nobody's Fool</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Young+Serif&display=swap">
+<style>
+/* Layout: left-aligned single column, 62rem max. Hero pairs the name with a live-looking scam text that has been stamped. Two doors follow: play, or send. */
+:root{
+  --bg:#EEF2F7; --surface:#FFFFFF; --ink:#14213D; --muted:#4A5878; --line:#C9D3E3;
+  --accent:#E8A100; --on-accent:#14213D; --hover:#DDE6F3; --band:#14213D; --on-band:#F1F4FA;
+  --good:#1F7A4D; --bad:#B3261E;
+  --ph-bg:#FFFFFF; --ph-bar:#F6F6F6; --ph-rule:#D8D8DC; --ph-ink:#000000; --ph-dim:#6E6E73;
+  --ph-in:#E9E9EB; --ph-link:#0A6CFF; --ph-av:#9A9AA2; --ph-av-ink:#FFFFFF;
+  --display:"Young Serif",Georgia,"Times New Roman",serif;
+  --body:"Atkinson Hyperlegible",Verdana,"Segoe UI",sans-serif;
+  --phone:-apple-system,BlinkMacSystemFont,"SF Pro Text","Helvetica Neue",Helvetica,Arial,sans-serif;
+}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
+  --bg:#0F1729; --surface:#1A2440; --ink:#F1F4FA; --muted:#A9B5CF; --line:#33416A;
+  --accent:#F5B92E; --on-accent:#14213D; --hover:#26335A; --band:#1A2440; --on-band:#F1F4FA;
+  --good:#6FD3A0; --bad:#FF9A8F;
+  --ph-bg:#000000; --ph-bar:#161618; --ph-rule:#2C2C2E; --ph-ink:#FFFFFF; --ph-dim:#98989F;
+  --ph-in:#26262A; --ph-link:#4C9BFF; --ph-av:#5E5E66; --ph-av-ink:#FFFFFF; color-scheme:dark } }
+:root[data-theme="dark"]{
+  --bg:#0F1729; --surface:#1A2440; --ink:#F1F4FA; --muted:#A9B5CF; --line:#33416A;
+  --accent:#F5B92E; --on-accent:#14213D; --hover:#26335A; --band:#1A2440; --on-band:#F1F4FA;
+  --good:#6FD3A0; --bad:#FF9A8F;
+  --ph-bg:#000000; --ph-bar:#161618; --ph-rule:#2C2C2E; --ph-ink:#FFFFFF; --ph-dim:#98989F;
+  --ph-in:#26262A; --ph-link:#4C9BFF; --ph-av:#5E5E66; --ph-av-ink:#FFFFFF; color-scheme:dark }
+
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:1.2rem;line-height:1.5;padding-inline:20px;padding-block:20px 40px}
+.wrap{max-width:62rem;margin-inline:auto;display:flex;flex-direction:column;gap:72px}
+h1,h2,h3{font-family:var(--display);font-weight:400;line-height:1.1;margin:0;text-wrap:balance}
+h1{font-size:clamp(3rem,9vw,5.6rem);letter-spacing:-.01em}
+h2{font-size:clamp(1.9rem,4.5vw,2.6rem)}
+h3{font-size:1.5rem}
+p{margin:0;max-width:38rem}
+a{color:inherit}
+.eyebrow{font-size:.9rem;letter-spacing:.1em;text-transform:uppercase;font-weight:700;color:var(--muted)}
+.muted{color:var(--muted)}
+.col{display:flex;flex-direction:column;gap:18px;min-width:0}
+:focus-visible{outline:4px solid var(--accent);outline-offset:3px}
+
+header.top{display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap}
+header.top a{font-weight:700}
+.logo{font-family:var(--display);font-size:1.3rem;text-decoration:none}
+
+.hero{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,1fr);gap:48px;align-items:center}
+.lede{font-size:1.45rem}
+.btns{display:flex;flex-wrap:wrap;gap:14px}
+.btn{display:inline-flex;align-items:center;min-height:64px;padding:14px 26px;border:2px solid var(--ink);border-radius:12px;font:inherit;font-weight:700;font-size:1.25rem;text-decoration:none;cursor:pointer;background:var(--surface);color:var(--ink)}
+.btn.main{background:var(--accent);color:var(--on-accent)}
+.btn:hover{filter:brightness(.95)}
+
+.demo{position:relative;padding-bottom:28px}
+.phone{font-family:var(--phone);background:var(--ph-bg);color:var(--ph-ink);border:2px solid var(--line);border-radius:22px;overflow:hidden;line-height:1.3}
+.ph-head{background:var(--ph-bar);border-bottom:1px solid var(--ph-rule);padding:10px 12px 8px;display:flex;flex-direction:column;align-items:center;gap:4px}
+.ph-av{width:3rem;height:3rem;border-radius:50%;background:var(--ph-av);position:relative;overflow:hidden;display:flex;justify-content:center}
+.ph-av::before{content:"";position:absolute;top:22%;width:36%;height:36%;border-radius:50%;background:var(--ph-av-ink)}
+.ph-av::after{content:"";position:absolute;top:64%;width:74%;height:60%;border-radius:50%;background:var(--ph-av-ink)}
+.ph-name{font-size:.85rem}
+.ph-body{padding:12px 12px 16px;display:flex;flex-direction:column;gap:4px}
+.ph-time{align-self:center;text-align:center;font-size:.75rem;color:var(--ph-dim);padding-bottom:8px}
+.bub{align-self:flex-start;max-width:84%;background:var(--ph-in);padding:9px 14px;border-radius:20px;font-size:1.05rem;overflow-wrap:anywhere}
+.bub.last{border-bottom-left-radius:6px}
+.ph-junk{font-size:.8rem;color:var(--ph-dim);padding:8px 4px 0}
+.ph-junk span{color:var(--ph-link)}
+.stamp{position:absolute;right:-6px;bottom:0;transform:rotate(-7deg);background:var(--bg);color:var(--bad);border:5px solid var(--bad);border-radius:10px;padding:6px 18px;font-family:var(--display);font-size:2rem;line-height:1.1;letter-spacing:.02em}
+
+.doors{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:24px}
+.door{background:var(--surface);border:2px solid var(--ink);border-radius:16px;padding:28px;display:flex;flex-direction:column;gap:14px;align-items:flex-start}
+.door .btn{margin-top:auto}
+
+.steps{margin:0;padding-left:1.4em;display:flex;flex-direction:column;gap:12px;max-width:38rem}
+.steps b{display:block}
+.copybox{background:var(--surface);border:2px dashed var(--line);border-radius:12px;padding:18px;user-select:all;overflow-wrap:anywhere;max-width:38rem}
+
+.list{display:flex;flex-direction:column;border-top:2px solid var(--ink)}
+.row{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px 24px;align-items:center;padding:20px 0;border-bottom:1px solid var(--line)}
+.row p{font-size:1.05rem}
+.soon{font-size:.9rem;letter-spacing:.08em;text-transform:uppercase;font-weight:700;color:var(--muted)}
+
+.band{background:var(--band);color:var(--on-band);border-radius:16px;padding:36px 28px}
+.band ul{margin:0;padding-left:1.2em;display:flex;flex-direction:column;gap:8px;max-width:38rem}
+
+form{display:flex;flex-wrap:wrap;gap:12px;max-width:38rem}
+label{font-weight:700;flex-basis:100%}
+input[type=email]{flex:1 1 14rem;min-width:0;min-height:64px;padding:12px 16px;font:inherit;color:var(--ink);background:var(--surface);border:2px solid var(--ink);border-radius:12px}
+#signup-msg{flex-basis:100%;font-weight:700}
+
+footer{border-top:1px solid var(--line);padding-top:24px;font-size:1rem;color:var(--muted);display:flex;flex-direction:column;gap:8px}
+@media (max-width:760px){
+  .hero,.doors{grid-template-columns:minmax(0,1fr)}
+  .wrap{gap:56px}
+  .row{grid-template-columns:minmax(0,1fr)}
+  .stamp{right:0;font-size:1.6rem}
+}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <header class="top">
+    <a class="logo" href="index.html">I'm Nobody's Fool</a>
+    <a href="#send">Send a training</a>
+  </header>
+
+  <main class="col" style="gap:72px">
+    <section class="hero">
+      <div class="col">
+        <p class="eyebrow">Free scam-spotting practice</p>
+        <h1>I'm Nobody's Fool</h1>
+        <p class="lede">Three-minute practice rounds that show you a scam text before a real one shows up. Play one yourself, or send one to someone you love.</p>
+        <div class="btns">
+          <a class="btn main" href="emergency-call.html">Play a training</a>
+          <a class="btn" href="#send">Send one</a>
+        </div>
+      </div>
+      <div class="demo" role="img" aria-label="A pretend scam text from an unknown number: Grandma its me. I got in a car accident and they arrested me. I need 4,000 dollars for bail. Please dont tell mom and dad. Stamped: Nice try.">
+        <div class="phone" aria-hidden="true">
+          <div class="ph-head"><div class="ph-av"></div><div class="ph-name">+1 (703) 555-0118 ›</div></div>
+          <div class="ph-body">
+            <div class="ph-time"><b>Text Message</b><br>Today 2:14 PM</div>
+            <div class="bub">Grandma its me</div>
+            <div class="bub">I got in a car accident and they arrested me. I need $4,000 for bail</div>
+            <div class="bub last">Please dont tell mom and dad</div>
+            <div class="ph-junk">The sender is not in your contact list. <span>Report Junk</span></div>
+          </div>
+        </div>
+        <div class="stamp" aria-hidden="true">Nice try.</div>
+      </div>
+    </section>
+
+    <section class="doors" aria-label="Choose what you want to do">
+      <div class="door">
+        <h2>I want to play</h2>
+        <p>You will see 7 pretend text messages and decide what you would do. You earn points for every round, and nobody finishes with zero.</p>
+        <a class="btn main" href="emergency-call.html">Start The Emergency Call</a>
+      </div>
+      <div class="door">
+        <h2>I want to send one</h2>
+        <p>Worried about a parent or grandparent? Send them a game they can win. It works better than a lecture, and they can send you their score.</p>
+        <a class="btn" href="#send">Show me how</a>
+      </div>
+    </section>
+
+    <section class="col" id="send">
+      <p class="eyebrow">For families</p>
+      <h2>How to send a training</h2>
+      <ol class="steps">
+        <li><b>Copy the message below.</b> Change the words so it sounds like you.</li>
+        <li><b>Send it from your own phone or email.</b> A link from a stranger is exactly what the training teaches people to ignore.</li>
+        <li><b>Tell them it is coming.</b> A quick call or a word at dinner is enough.</li>
+      </ol>
+      <div class="copybox" id="msg">Hi! I found a 3-minute quiz about scam texts and I want to see if you can beat my score. Nothing to sign up for. https://imnobodysfool.com/emergency-call.html</div>
+      <div class="btns"><button class="btn main" type="button" id="copy">Copy the message</button></div>
+    </section>
+
+    <section class="col">
+      <p class="eyebrow">Trainings</p>
+      <h2>One scam at a time</h2>
+      <div class="list">
+        <div class="row">
+          <div class="col" style="gap:6px"><h3>The Emergency Call</h3><p>"Grandma, it's me, I'm in trouble." The family emergency scam, in 7 rounds.</p></div>
+          <a class="btn main" href="emergency-call.html">Play</a>
+        </div>
+        <div class="row">
+          <div class="col" style="gap:6px"><h3>The Sure Thing</h3><p>Investment and crypto offers that promise big returns.</p></div>
+          <span class="soon">Coming next</span>
+        </div>
+        <div class="row">
+          <div class="col" style="gap:6px"><h3>The Helpful Technician</h3><p>Pop-ups and callers who say your computer has a virus.</p></div>
+          <span class="soon">Coming next</span>
+        </div>
+        <div class="row">
+          <div class="col" style="gap:6px"><h3>The Bank on the Line</h3><p>Messages that claim to be your bank, Medicare or the IRS.</p></div>
+          <span class="soon">Coming next</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="band col">
+      <h2>Our promise</h2>
+      <ul>
+        <li>Every training is free to play and free to send.</li>
+        <li>This site will never ask you for money, a password, or a card or account number.</li>
+        <li>Nothing to download and no account to create.</li>
+        <li>Everything in a training is pretend. No real person or company is contacting you.</li>
+      </ul>
+    </section>
+
+    <section class="col" id="updates">
+      <p class="eyebrow">For people who send trainings</p>
+      <h2>Hear when a new training is ready</h2>
+      <p>Leave your email and we will write when there is a new one to send. You don't need to do this to play.</p>
+      <form id="signup" method="post" target="_blank">
+        <label for="email">Your email address</label>
+        <input type="email" id="email" name="email" autocomplete="email" required placeholder="you@example.com">
+        <button class="btn main" type="submit">Keep me posted</button>
+        <p id="signup-msg" role="status" hidden></p>
+      </form>
+    </section>
+  </main>
+
+  <footer>
+    <p>Got a real scam message? Report it at <a href="https://reportfraud.ftc.gov">ReportFraud.ftc.gov</a>.</p>
+    <p>I'm Nobody's Fool is not connected to any bank, phone company or government agency. © 2026</p>
+  </footer>
+</div>
+
+<script>
+/* Paste your mailing-list form address between the quotes to turn sign-ups on. */
+var SIGNUP_URL = "";
+
+var form = document.getElementById("signup"), note = document.getElementById("signup-msg");
+if (SIGNUP_URL) form.action = SIGNUP_URL;
+form.addEventListener("submit", function(e){
+  if (!SIGNUP_URL){
+    e.preventDefault();
+    note.textContent = "Sign-ups are not connected yet. Nothing was saved.";
+    note.hidden = false;
+  }
+});
+var copy = document.getElementById("copy"), msg = document.getElementById("msg");
+copy.addEventListener("click", function(){
+  function sel(){ var g=document.createRange(); g.selectNodeContents(msg); var s=getSelection(); s.removeAllRanges(); s.addRange(g); copy.textContent="Selected. Now copy it"; }
+  try{ navigator.clipboard.writeText(msg.textContent).then(function(){ copy.textContent="Copied"; }, sel); }catch(err){ sel(); }
+});
+</script>
+
+</body>
+</html>
