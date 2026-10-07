@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Connection Check</title>
+<style>body{font:18px/1.5 system-ui,sans-serif;max-width:40rem;margin:2rem auto;padding:0 16px}pre{background:#eee;color:#111;padding:12px;white-space:pre-wrap;overflow-wrap:anywhere}</style>
+</head>
+<body>
+<h1>Database connection check</h1>
+<p>This page tries to save one test row to the <code>results</code> table and shows exactly what the database answered.</p>
+<pre id="out">Checking…</pre>
+<script src="assets/config.js?v=2"></script>
+<script>
+var c = window.NF_CONFIG, out = document.getElementById("out");
+function say(s){ out.textContent += "\n" + s; }
+out.textContent = "Address: " + (c.SUPABASE_URL || "(empty)") + "\nKey starts: " + (c.SUPABASE_KEY ? c.SUPABASE_KEY.slice(0,18) + "…" : "(empty)");
+function attempt(label, headers){
+  return fetch(c.SUPABASE_URL + "/rest/v1/results", {method:"POST", headers:headers,
+    body: JSON.stringify({test:"connection-check", correct:0, total:0, pct:0, answers:[]})})
+  .then(function(r){ return r.text().then(function(t){ say("\n" + label + "\nStatus: " + r.status + (r.ok ? "  SAVED" : "  NOT SAVED") + (t ? "\nAnswer: " + t : "")); return r.ok; }); })
+  .catch(function(e){ say("\n" + label + "\nCould not reach the database: " + e); return false; });
+}
+var base = {"apikey":c.SUPABASE_KEY, "Content-Type":"application/json", "Prefer":"return=minimal"};
+var both = Object.assign({"Authorization":"Bearer " + c.SUPABASE_KEY}, base);
+attempt("Try 1 (the way the site sends it now)", both).then(function(){ return attempt("Try 2 (key in one place only)", base); });
+</script>
+</body>
+</html>
