@@ -1,0 +1,150 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Sign in with an emailed code to keep your scam-test scores over time.">
+<title>My Results</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Young+Serif&display=swap">
+<style>body{margin:0}[hidden]{display:none!important}</style>
+<link rel="stylesheet" href="assets/quiz.css">
+</head>
+<body>
+<main id="app">
+  <p class="brand"><a href="index.html">I'm Nobody's Fool</a></p>
+
+  <div class="stack" id="signin" hidden>
+    <h1>My Results</h1>
+    <p>Sign in to keep your scores over time and pick up at your own level on any phone, tablet or computer.</p>
+    <p>There is no password. We email you a code and you type it here. We will never send you a link to click.</p>
+    <form class="formcol" id="f-email">
+      <label for="email">Your email address</label>
+      <input class="field" type="email" id="email" autocomplete="email" required placeholder="you@example.com">
+      <button class="go" type="submit" id="b-email">Email me a code</button>
+    </form>
+    <form class="formcol" id="f-code" hidden>
+      <p id="sent"></p>
+      <label for="code">The code from the email</label>
+      <input class="field code" type="text" id="code" inputmode="numeric" autocomplete="one-time-code" pattern="[0-9]{6,8}" maxlength="8" required>
+      <button class="go" type="submit" id="b-code">Sign in</button>
+      <button class="linkbtn" type="button" id="again">Use a different email address</button>
+    </form>
+    <p class="note" id="msg" role="status" hidden></p>
+    <p class="muted small">You can always <a href="quiz.html">play without signing in</a>. <a href="privacy.html">How we handle your information</a>.</p>
+  </div>
+
+  <div class="stack" id="results" hidden>
+    <h1>My Results</h1>
+    <p class="muted" id="who"></p>
+    <div class="stats" id="stats"></div>
+    <h2>Scores over time</h2>
+    <div id="chartbox"></div>
+    <h2>Every test</h2>
+    <div class="tablewrap" id="tablebox"></div>
+    <div class="btnrow">
+      <a class="go" href="quiz.html">Take a practice test</a>
+      <button class="opt" type="button" id="out">Sign out</button>
+    </div>
+  </div>
+</main>
+<script src="assets/config.js"></script>
+<script>
+var LEVELS = ["", "Warm-up", "Getting tricky", "Sneaky", "Crafty", "Master forger"];
+var NAMES = {"emergency-call":"The Emergency Call", "practice":"Practice test"};
+var $ = function(id){ return document.getElementById(id); };
+function el(tag, cls, text){ var e=document.createElement(tag); if(cls) e.className=cls; if(text!=null) e.textContent=text; return e; }
+function svg(tag, attrs){ var e=document.createElementNS("http://www.w3.org/2000/svg", tag); for(var k in attrs) e.setAttribute(k, attrs[k]); return e; }
+function say(t){ $("msg").textContent = t; $("msg").hidden = !t; }
+function day(iso){ return new Date(iso).toLocaleDateString(undefined, {month:"short", day:"numeric", year:"numeric"}); }
+
+function show(){
+  var s = NF_auth.current();
+  $("signin").hidden = !!s; $("results").hidden = !s;
+  if(!s){ if(!NF_auth.enabled()) say("Sign-in is not open yet."); return; }
+  $("who").textContent = "Signed in as " + s.email;
+  NF_api("GET", "results?select=created_at,test,correct,total,pct,level_end&order=created_at.asc").then(function(r){
+    if(!NF_auth.current()) return show();                 /* sign-in ended while loading */
+    draw(r.ok && r.data ? r.data : null);
+  });
+}
+
+function draw(rows){
+  var stats = $("stats"), chart = $("chartbox"), table = $("tablebox");
+  stats.textContent = ""; chart.textContent = ""; table.textContent = "";
+  if(!rows){ chart.append(el("p",null,"We could not load your results just now. Please try again in a minute.")); return; }
+  if(!rows.length){ chart.append(el("p",null,"No tests yet. Finish a test while signed in and it will appear here.")); return; }
+  var best = Math.max.apply(null, rows.map(function(r){ return r.pct; }));
+  var lvl = Math.round(Number(NF_store.get("nf_skill", 1)));
+  [[rows.length, rows.length === 1 ? "test taken" : "tests taken"], [best + "%", "best score"], [lvl + " of 5", "level: " + LEVELS[lvl]]].forEach(function(s){
+    var d = el("div","stat"); d.append(el("b",null,String(s[0])), el("span",null,s[1])); stats.append(d);
+  });
+
+  if(rows.length < 2) chart.append(el("p","muted","Take one more test and a chart of your progress will appear here."));
+  else {
+    var W = 360, H = 220, L = 40, R = 12, T = 16, B = 28, n = rows.length;
+    var x = function(i){ return L + (W - L - R) * (n === 1 ? .5 : i / (n - 1)); };
+    var y = function(p){ return T + (H - T - B) * (1 - p / 100); };
+    var box = el("div","chart"), g = svg("svg", {viewBox:"0 0 "+W+" "+H, role:"img", "aria-label":"Line chart of your test scores, oldest to newest. The table below lists the same scores."});
+    [0, 50, 100].forEach(function(p){
+      g.append(svg("line", {class:"grid", x1:L, x2:W-R, y1:y(p), y2:y(p)}));
+      var t = svg("text", {x:L-8, y:y(p)+4, "text-anchor":"end"}); t.textContent = p + "%"; g.append(t);
+    });
+    g.append(svg("line", {class:"mark80", x1:L, x2:W-R, y1:y(80), y2:y(80)}));
+    var m = svg("text", {x:L+4, y:y(80)-5}); m.textContent = "80% unlocks inbox tests"; g.append(m);
+    var a = svg("text", {x:L, y:H-6}); a.textContent = day(rows[0].created_at); g.append(a);
+    var z = svg("text", {x:W-R, y:H-6, "text-anchor":"end"}); z.textContent = day(rows[n-1].created_at); g.append(z);
+    g.append(svg("polyline", {class:"ln", points: rows.map(function(r,i){ return x(i)+","+y(r.pct); }).join(" ")}));
+    var tip = el("div","tip"); tip.hidden = true;
+    rows.forEach(function(r, i){
+      g.append(svg("circle", {class:"pt", cx:x(i), cy:y(r.pct), r:5}));
+      var hit = svg("circle", {class:"hit", cx:x(i), cy:y(r.pct), r:14, tabindex:0, role:"img", "aria-label":day(r.created_at)+": "+r.pct+"%"});
+      var on = function(){ tip.textContent = day(r.created_at) + ": " + r.pct + "%"; tip.style.left = (x(i)/W*100) + "%"; tip.style.top = (y(r.pct)/H*100) + "%"; tip.hidden = false; };
+      var off = function(){ tip.hidden = true; };
+      hit.addEventListener("mouseenter", on); hit.addEventListener("focus", on); hit.addEventListener("click", on);
+      hit.addEventListener("mouseleave", off); hit.addEventListener("blur", off);
+      g.append(hit);
+    });
+    var inner = el("div"); inner.style.position = "relative"; inner.append(g, tip);
+    box.append(inner); chart.append(box);
+  }
+
+  var t = el("table"), hd = el("tr");
+  ["Date","Test","Score","Level reached"].forEach(function(h){ hd.append(el("th",null,h)); });
+  t.append(hd);
+  rows.slice().reverse().forEach(function(r){
+    var tr = el("tr"), lv = Math.round(Number(r.level_end) || 1);
+    tr.append(el("td",null,day(r.created_at)), el("td",null,NAMES[r.test] || r.test),
+              el("td",null,r.pct + "% (" + r.correct + " of " + r.total + ")"),
+              el("td",null,r.test === "practice" ? lv + ", " + LEVELS[lv] : "—"));
+    t.append(tr);
+  });
+  table.append(t);
+}
+
+var pending = "";
+$("f-email").addEventListener("submit", function(e){
+  e.preventDefault(); say("");
+  var email = $("email").value.trim(); $("b-email").disabled = true;
+  NF_auth.sendCode(email).then(function(r){
+    $("b-email").disabled = false;
+    if(!r.ok){ say(r.status === 429 ? "Too many codes have been requested. Please wait a few minutes and try again." : "We could not send a code. Check the address and try again."); return; }
+    pending = email;
+    $("sent").textContent = "We sent a code to " + email + ". It can take a minute to arrive. Check your junk folder too.";
+    $("f-email").hidden = true; $("f-code").hidden = false; $("code").focus();
+  });
+});
+$("f-code").addEventListener("submit", function(e){
+  e.preventDefault(); say(""); $("b-code").disabled = true;
+  NF_auth.verify(pending, $("code").value.replace(/\D/g,"")).then(function(r){
+    $("b-code").disabled = false;
+    if(!r.ok){ say("That code did not work. Check the numbers, or ask for a new code."); return; }
+    $("code").value = "";
+    NF_profile.load().then(show, show);
+  });
+});
+$("again").addEventListener("click", function(){ say(""); $("f-code").hidden = true; $("f-email").hidden = false; $("email").focus(); });
+$("out").addEventListener("click", function(){ NF_auth.signOut().then(function(){ $("f-code").hidden = true; $("f-email").hidden = false; show(); }); });
+NF_auth.token().then(function(){ return NF_profile.load(); }).then(show, show);
+</script>
+</body>
+</html>

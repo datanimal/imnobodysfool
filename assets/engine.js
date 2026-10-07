@@ -150,6 +150,7 @@ window.NF_run = function(cfg){
     if(seen.length >= BANK.length) seen = [];
     NF_store.set("nf_seen", seen);
     if(adaptive) NF_store.set("nf_skill", st.skill);
+    NF_profile.save();
     NF_save("results", {
       anon_id: NF_anon(), test: cfg.test, correct: st.right, total: total, pct: pct,
       level_start: Math.round(st.startSkill*100)/100, level_end: Math.round(st.skill*100)/100, answers: st.answers
@@ -163,7 +164,7 @@ window.NF_run = function(cfg){
         el("p",null,"Score "+PASS+"% or better on any test and we can send practice scam emails to your real inbox, to see how you do when you are not expecting one."));
       return locked;
     }
-    if(!window.NF_CONFIG.SUPABASE_URL){
+    if(!NF_auth.enabled()){
       var soon = el("div","card locked");
       soon.append(el("h2",null,"You have earned live inbox tests"),
         el("p",null,"You scored "+pct+"%. That is good enough for practice scam emails sent to your real inbox. Sign-ups open soon, so please check back."));
@@ -210,6 +211,10 @@ window.NF_run = function(cfg){
     if(adaptive){ go.href="#"; go.onclick = function(e){ e.preventDefault(); st = fresh(); advance(); render(); window.scrollTo(0,0); }; }
     more.append(go);
     screen.append(more);
+    var acct = el("p",null), al = el("a");
+    if(NF_auth.current()){ acct.append("This result is saved to your account. "); al.textContent = "See my results"; }
+    else if(NF_auth.enabled()){ acct.append("Want to keep your scores over time? "); al.textContent = "Sign in with your email"; }
+    if(al.textContent){ al.href = "account.html"; acct.append(al, "."); screen.append(acct); }
 
     var rules = el("ol","rules");
     ["Don't reply, and hang up if they call. You are never being rude to a stranger who asks for money.",
@@ -228,7 +233,10 @@ window.NF_run = function(cfg){
     h.focus({preventScroll:true});
   }
 
-  st = fresh();
-  document.getElementById("start").onclick = function(){ advance(); render(); window.scrollTo(0,0); };
+  var startBtn = document.getElementById("start"), ready = false;
+  function go(){ if(ready) return; ready = true; startBtn.disabled = false; }
+  startBtn.disabled = true;
+  NF_profile.load().then(go, go); setTimeout(go, 3000);     /* never keep anyone waiting on the network */
+  startBtn.onclick = function(){ st = fresh(); advance(); render(); window.scrollTo(0,0); };
 };
 })();
