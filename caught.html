@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>That Was a Practice Test</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Young+Serif&display=swap">
+<style>body{margin:0}[hidden]{display:none!important}</style>
+<link rel="stylesheet" href="assets/quiz.css">
+</head>
+<body>
+<main id="app">
+  <p class="brand"><a href="index.html">I'm Nobody's Fool</a></p>
+  <div class="stack">
+    <h1>That was a practice test.</h1>
+    <p>You are safe. The email you just clicked came from I'm Nobody's Fool, because you signed up for inbox tests. Nothing was taken and nothing was installed.</p>
+    <p>A real scam email would have brought you to a page asking for a password, a card number or a payment. This is why we practice.</p>
+    <h2>What gave it away</h2>
+    <ul class="rules" id="tells"></ul>
+    <h2>Next time</h2>
+    <ol class="rules">
+      <li>Read the sender's address, not only the name.</li>
+      <li>Don't use the link. Go to the company's website by typing it yourself.</li>
+      <li>If it says hurry, slow down.</li>
+    </ol>
+    <a class="go" href="quiz.html" style="text-decoration:none;display:inline-flex;align-items:center">Take a practice test</a>
+    <p class="muted small">Want the inbox tests to stop? Reply STOP to any email from us and they end for good.</p>
+  </div>
+</main>
+<script src="assets/config.js"></script>
+<script>
+var TELLS = {
+  parcel:["You were not expecting a package from a company called Northway Parcel.","It asked for a small fee to release a delivery. Carriers do not do that by email.","The sender's address was not a delivery company's address."],
+  bank:["It never named your bank. A real bank says who it is.","It said your account was locked and gave you a deadline.","A bank does not unlock accounts through an email link."],
+  prize:["You cannot win a prize draw you did not enter.","It offered a reward and asked you to act today.","The sender was a name you had never heard of."],
+  storage:["It threatened to delete your photos today.","It asked you to pay through a link instead of through your phone's own settings.","The sender was not the company that makes your phone."],
+  invoice:["It was a receipt for something you never bought.","The charge was large and the deadline was short, so that you would react quickly.","A real company's receipt comes from an address you recognize."],
+  toll:["Toll agencies send bills by mail to the address on your car's registration.","The amount was tiny, so that paying would feel easier than checking.","It warned of a late fee to make you hurry."]
+};
+var p = new URLSearchParams(location.search), t = p.get("t") || "", list = document.getElementById("tells");
+(TELLS[t] || ["It arrived unexpectedly and wanted you to click.","It gave you a reason to hurry.","The sender's address did not match who it claimed to be."]).forEach(function(s){
+  var li = document.createElement("li"); li.textContent = s; list.append(li);
+});
+if(t) NF_save("inbox_clicks", {template:t.slice(0,40), code:(p.get("p") || "").slice(0,40)});
+</script>
+</body>
+</html>

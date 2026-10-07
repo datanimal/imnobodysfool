@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="description" content="A three-minute practice round on the family emergency scam.">
-<title>The Emergency Call</title>
+<meta name="description" content="Ten-question scam-spotting tests that get a little harder as you get them right.">
+<title>Practice Tests</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Young+Serif&display=swap">
 <style>body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
 <link rel="stylesheet" href="assets/quiz.css">
@@ -13,9 +13,9 @@
 <main id="app">
   <p class="brand"><a href="index.html">I'm Nobody's Fool</a></p>
   <div class="stack" id="screen">
-    <h1>The Emergency Call</h1>
-    <p>Someone who cares about you sent you this. It is a practice round for a trick that criminals use on families every day.</p>
-    <p>You will see 7 pretend text messages, shown the way they would look on your phone. Decide what you would do. It takes about 3 minutes.</p>
+    <h1>Practice Test</h1>
+    <p>Ten pretend texts and emails: fake banks, fake prizes, fake deliveries, and some ordinary messages that are perfectly safe.</p>
+    <p>The questions get a little harder each time you get one right. Score 80% or better and you unlock live inbox tests.</p>
     <p class="muted">Nothing here is real. Nobody will ask you for money or personal details.</p>
     <button class="go" id="start">Start</button>
   </div>
@@ -23,6 +23,6 @@
 <script src="assets/config.js"></script>
 <script src="assets/questions.js"></script>
 <script src="assets/engine.js"></script>
-<script>NF_run({test:"emergency-call", fixed:["fam-1","fam-2","fam-3","fam-4","fam-5","fam-6","fam-7"]});</script>
+<script>NF_run({test:"practice", length:10});</script>
 </body>
 </html>

@@ -163,23 +163,19 @@ footer{border-top:1px solid var(--line);padding-top:24px;font-size:1rem;color:va
 
     <section class="col">
       <p class="eyebrow">Trainings</p>
-      <h2>One scam at a time</h2>
+      <h2>Start easy, get sharper</h2>
       <div class="list">
         <div class="row">
-          <div class="col" style="gap:6px"><h3>The Emergency Call</h3><p>"Grandma, it's me, I'm in trouble." The family emergency scam, in 7 rounds.</p></div>
+          <div class="col" style="gap:6px"><h3>The Emergency Call</h3><p>"Grandma, it's me, I'm in trouble." The family emergency scam, in 7 rounds. The best one to send first.</p></div>
           <a class="btn main" href="emergency-call.html">Play</a>
         </div>
         <div class="row">
-          <div class="col" style="gap:6px"><h3>The Sure Thing</h3><p>Investment and crypto offers that promise big returns.</p></div>
-          <span class="soon">Coming next</span>
+          <div class="col" style="gap:6px"><h3>Practice Tests</h3><p>Ten texts and emails at a time: fake banks, prizes, deliveries, investments and more. The questions get a little harder as you get them right.</p></div>
+          <a class="btn main" href="quiz.html">Play</a>
         </div>
         <div class="row">
-          <div class="col" style="gap:6px"><h3>The Helpful Technician</h3><p>Pop-ups and callers who say your computer has a virus.</p></div>
-          <span class="soon">Coming next</span>
-        </div>
-        <div class="row">
-          <div class="col" style="gap:6px"><h3>The Bank on the Line</h3><p>Messages that claim to be your bank, Medicare or the IRS.</p></div>
-          <span class="soon">Coming next</span>
+          <div class="col" style="gap:6px"><h3>Live Inbox Tests</h3><p>Practice scam emails sent to your real inbox when you are not expecting them. Only for people who ask for them.</p></div>
+          <span class="soon">Score 80% to unlock</span>
         </div>
       </div>
     </section>
@@ -189,7 +185,7 @@ footer{border-top:1px solid var(--line);padding-top:24px;font-size:1rem;color:va
       <ul>
         <li>Every training is free to play and free to send.</li>
         <li>This site will never ask you for money, a password, or a card or account number.</li>
-        <li>Nothing to download and no account to create.</li>
+        <li>Nothing to download and no account to create. You can play without telling us who you are.</li>
         <li>Everything in a training is pretend. No real person or company is contacting you.</li>
       </ul>
     </section>
@@ -198,7 +194,7 @@ footer{border-top:1px solid var(--line);padding-top:24px;font-size:1rem;color:va
       <p class="eyebrow">For people who send trainings</p>
       <h2>Hear when a new training is ready</h2>
       <p>Leave your email and we will write when there is a new one to send. You don't need to do this to play.</p>
-      <form id="signup" method="post" target="_blank">
+      <form id="signup">
         <label for="email">Your email address</label>
         <input type="email" id="email" name="email" autocomplete="email" required placeholder="you@example.com">
         <button class="btn main" type="submit">Keep me posted</button>
@@ -209,22 +205,19 @@ footer{border-top:1px solid var(--line);padding-top:24px;font-size:1rem;color:va
 
   <footer>
     <p>Got a real scam message? Report it at <a href="https://reportfraud.ftc.gov">ReportFraud.ftc.gov</a>.</p>
-    <p>I'm Nobody's Fool is not connected to any bank, phone company or government agency. © 2026</p>
+    <p>I'm Nobody's Fool is not connected to any bank, phone company or government agency. © 2026 · <a href="privacy.html">How we handle your information</a></p>
   </footer>
 </div>
 
+<script src="assets/config.js"></script>
 <script>
-/* Paste your mailing-list form address between the quotes to turn sign-ups on. */
-var SIGNUP_URL = "";
-
 var form = document.getElementById("signup"), note = document.getElementById("signup-msg");
-if (SIGNUP_URL) form.action = SIGNUP_URL;
 form.addEventListener("submit", function(e){
-  if (!SIGNUP_URL){
-    e.preventDefault();
-    note.textContent = "Sign-ups are not connected yet. Nothing was saved.";
+  e.preventDefault();
+  NF_save("sender_signups", {email: document.getElementById("email").value.trim()}).then(function(ok){
+    note.textContent = ok ? "Thanks. We will write when a new training is ready." : "Sign-ups are not open yet, so nothing was saved.";
     note.hidden = false;
-  }
+  });
 });
 var copy = document.getElementById("copy"), msg = document.getElementById("msg");
 copy.addEventListener("click", function(){
